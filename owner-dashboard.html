@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KitchenShare - Kitchen Owner Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9fafb;
+        }
+        .sidebar {
+            background-color: #0d2436;
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+        .sidebar-link {
+            color: #a3bed2;
+            transition: all 0.2s;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .logo {
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .orange-accent {
+            color: #ff6b35;
+        }
+        .main-content {
+            min-height: 100vh;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        .card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        .notification-badge {
+            background-color: #ff6b35;
+        }
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .status-upcoming {
+            background-color: #3b82f6;
+        }
+        .status-completed {
+            background-color: #10b981;
+        }
+        .status-cancelled {
+            background-color: #ef4444;
+        }
+        .btn-primary {
+            background-color: #ff6b35;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #e05a2b;
+        }
+        .btn-secondary {
+            background-color: #0d2436;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #183d5d;
+        }
+        .calendar-event-booked {
+            background-color: #3b82f6 !important;
+            border-color: #2563eb !important;
+        }
+        .calendar-event-available {
+            background-color: #10b981 !important;
+            border-color: #059669 !important;
+        }
+        .calendar-event-blocked {
+            background-color: #ef4444 !important;
+            border-color: #dc2626 !important;
+        }
+        .calendar-event-pending {
+            background-color: #f59e0b !important;
+            border-color: #d97706 !important;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 250px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            z-index: 1;
+            border-radius: 0.5rem;
+        }
+        .show {
+            display: block;
+        }
+        .equipment-tag {
+            background-color: #e5e7eb;
+            color: #374151;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            display: inline-block;
+            margin: 0.25rem;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @media print {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="flex flex-row">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 fixed h-full overflow-y-auto no-print">
+            <div class="p-4">
+                <div class="logo mb-8 flex items-center">
+                    <i class="fas fa-utensils mr-2 orange-accent"></i>
+                    <span>Kitchen<span class="orange-accent">Share</span></span>
+                </div>
+                <div class="sidebar-menu space-y-2">
+                    <a href="#dashboard" class="sidebar-link flex items-center p-3 rounded-lg active" onclick="changeTab('dashboard')">
+                        <i class="fas fa-tachometer-alt mr-3 w-5 text-center"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#bookings" class="sidebar-link flex items-center p-3 rounded-lg" onclick="changeTab('bookings')">
+                        <i class="far fa-calendar-alt mr-3 w-5 text-center"></i>
+                        <span>Bookings</span>
+                    </a>
+                    <a href="#kitchen-profile" class="sidebar-link flex items-center p-3 rounded-lg" onclick="changeTab('kitchen-profile')">
+                        <i class="fas fa-store mr-3 w-5 text-center"></i>
+                        <span>Kitchen Profile</span>
+                    </a>
+                    <a href="#earnings" class="sidebar-link flex items-center p-3 rounded-lg" onclick="changeTab('earnings')">
+                        <i class="fas fa-dollar-sign mr-3 w-5 text-center"></i>
+                        <span>Earnings</span>
+                    </a>
+                    <a href="#availability" class="sidebar-link flex items-center p-3 rounded-lg" onclick="changeTab('availability')">
+                        <i class="fas fa-clock mr-3 w-5 text-center"></i>
+                        <span>Availability</span>
+                    </a>
+                    <a href="#settings" class="sidebar-link flex items-center p-3 rounded-lg" onclick="changeTab('settings')">
+                        <i class="fas fa-cog mr-3 w-5 text-center"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="#support" class="sidebar-link flex items-center p-3 rounded-lg" onclick="changeTab('support')">
+                        <i class="fas fa-question-circle mr-3 w-5 text-center"></i>
+                        <span>Support</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content flex-1 ml-64">
+            <!-- Header -->
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                    <h1 class="text-2xl font-semibold">Kitchen Owner Dashboard</h1>
+                    <div class="flex items-center space-x-4">
+                        <!-- Notifications -->
+                        <div class="relative">
+                            <button onclick="toggleNotifications()" class="p-2 rounded-full hover:bg-gray-100 focus:outline-none relative">
+                                <i class="far fa-bell text-xl"></i>
+                                <span class="notification-badge absolute top-0 right-0 h-4 w-4 rounded-full text-xs flex items-center justify-center text-white">3</span>
+                            </button>
+                            <div id="notificationDropdown" class="dropdown-content mt-2">
+                                <div class="p-4 border-b">
+                                    <h3 class="font-semibold text-lg">Notifications</h3>
+                                </div>
+                                <div class="p-2">
+                                    <div class="p-2 hover:bg-gray-50 rounded-lg cursor-pointer border-l-4 border-blue-500">
+                                        <p class="text-sm font-semibold">New Booking Request</p>
+                                        <p class="text-xs text-gray-500">Chef Alex wants to book your kitchen on July 15th</p>
+                                        <p class="text-xs text-gray-400 mt-1">10 minutes ago</p>
+                                    </div>
+                                    <div class="p-2 hover:bg-gray-50 rounded-lg cursor-pointer border-l-4 border-green-500">
+                                        <p class="text-sm font-semibold">Booking Confirmed</p>
+                                        <p class="text-xs text-gray-500">Your booking with Chef Maria is confirmed</p>
+                                        <p class="text-xs text-gray-400 mt-1">2 hours ago</p>
+                                    </div>
+                                    <div class="p-2 hover:bg-gray-50 rounded-lg cursor-pointer border-l-4 border-yellow-500">
+                                        <p class="text-sm font-semibold">Reminder: Upcoming Booking</p>
+                                        <p class="text-xs text-gray-500">Chef John will be using your kitchen tomorrow</p>
+                                        <p class="text-xs text-gray-400 mt-1">5 hours ago</p>
+                                    </div>
+                                </div>
+                                <div class="p-2 text-center border-t">
+                                    <a href="#" class="text-sm text-blue-600 hover:text-blue-800">View All Notifications</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Profile -->
+                        <div class="relative">
+                            <button onclick="toggleProfile()" class="flex items-center space-x-2 focus:outline-none">
+                                <img src="https://randomuser.me/api/portraits/women/42.jpg" alt="Profile picture" class="h-8 w-8 rounded-full object-cover" id="dashboardUserAvatarTop">
+                                <span id="dashboardUserNameTop">Sarah's Kitchen</span>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+                            <div id="profileDropdown" class="dropdown-content mt-2">
+                                <div class="p-4 border-b flex items-center space-x-3">
+                                    <img src="https://randomuser.me/api/portraits/women/42.jpg" alt="Profile picture" class="h-10 w-10 rounded-full object-cover" id="dashboardUserAvatarDropdown">
+                                    <div>
+                                        <h3 class="font-semibold" id="dashboardUserFullNameDropdown">Sarah Johnson</h3>
+                                        <p class="text-sm text-gray-500" id="dashboardUserEmailDropdown">sarah@example.com</p>
+                                    </div>
+                                </div>
+                                <div class="py-1">
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-user mr-2"></i> My Profile
+                                    </a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-cog mr-2"></i> Account Settings
+                                    </a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-question-circle mr-2"></i> Help Center
+                                    </a>
+                                    <div class="border-t my-1"></div>
+                                    <a href="#" id="dashboard-logout-link" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                        <i class="fas fa-sign-out-alt mr-2"></i> Sign Out
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content active">
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="card p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Bookings This Month</p>
+                                    <h3 class="text-2xl font-bold mt-1">28</h3>
+                                    <p class="text-green-600 text-sm"><i class="fas fa-arrow-up mr-1"></i>12% from last month</p>
+                                </div>
+                                <div class="rounded-full bg-blue-100 p-3">
+                                    <i class="far fa-calendar-alt text-blue-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Revenue This Month</p>
+                                    <h3 class="text-2xl font-bold mt-1">$3,250</h3>
+                                    <p class="text-green-600 text-sm"><i class="fas fa-arrow-up mr-1"></i>8% from last month</p>
+                                </div>
+                                <div class="rounded-full bg-green-100 p-3">
+                                    <i class="fas fa-dollar-sign text-green-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Kitchen Utilization</p>
+                                    <h3 class="text-2xl font-bold mt-1">68%</h3>
+                                    <p class="text-green-600 text-sm"><i class="fas fa-arrow-up mr-1"></i>5% from last month</p>
+                                </div>
+                                <div class="rounded-full bg-purple-100 p-3">
+                                    <i class="fas fa-chart-pie text-purple-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500 text-sm">New Requests</p>
+                                    <h3 class="text-2xl font-bold mt-1">5</h3>
+                                    <p class="text-yellow-600 text-sm"><i class="fas fa-clock mr-1"></i>Needs your response</p>
+                                </div>
+                                <div class="rounded-full bg-yellow-100 p-3">
+                                    <i class="fas fa-bell text-yellow-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calendar and Quick Actions Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="card p-5 md:col-span-2">
+                            <h2 class="text-lg font-semibold mb-4">Upcoming Bookings</h2>
+                            <div id="calendar" class="min-h-80"></div>
+                        </div>
+                        <div class="card p-5">
+                            <h2 class="text-lg font-semibold mb-4">Pending Requests</h2>
+                            <div class="space-y-4">
+                                <div class="border rounded-lg p-4 hover:shadow-md transition">
+                                    <div class="flex justify-between">
+                                        <h3 class="font-medium">Chef Alex Rodriguez</h3>
+                                        <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Pending</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 my-2">July 15, 2023 • 9:00 AM - 3:00 PM</p>
+                                    <p class="text-sm text-gray-500 mb-3">Mexican Cuisine Pop-up • 6 people</p>
+                                    <div class="flex space-x-2">
+                                        <button class="btn-primary px-3 py-1 rounded text-sm">Approve</button>
+                                        <button class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm">Decline</button>
+                                    </div>
+                                </div>
+                                <div class="border rounded-lg p-4 hover:shadow-md transition">
+                                    <div class="flex justify-between">
+                                        <h3 class="font-medium">Chef Emily Chang</h3>
+                                        <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Pending</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 my-2">July 18, 2023 • 2:00 PM - 8:00 PM</p>
+                                    <p class="text-sm text-gray-500 mb-3">Asian Fusion Demo • 4 people</p>
+                                    <div class="flex space-x-2">
+                                        <button class="btn-primary px-3 py-1 rounded text-sm">Approve</button>
+                                        <button class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm">Decline</button>
+                                    </div>
+                                </div>
+                                <div class="border rounded-lg p-4 hover:shadow-md transition">
+                                    <div class="flex justify-between">
+                                        <h3 class="font-medium">Chef Michael Thomas</h3>
+                                        <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Pending</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 my-2">July 22, 2023 • 10:00 AM - 4:00 PM</p>
+                                    <p class="text-sm text-gray-500 mb-3">Italian Cooking Class • 8 people</p>
+                                    <div class="flex space-x-2">
+                                        <button class="btn-primary px-3 py-1 rounded text-sm">Approve</button>
+                                        <button class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm">Decline</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Bookings and Earnings Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="card p-5 md:col-span-2">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-lg font-semibold">Recent Bookings</h2>
+                                <a href="#bookings" class="text-sm text-blue-600 hover:text-blue-800" onclick="changeTab('bookings'); return false;">View All</a>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full">
+                                    <thead>
+                                        <tr class="border-b">
+                                            <th class="text-left py-3 px-2">Chef</th>
+                                            <th class="text-left py-3 px-2">Date & Time</th>
+                                            <th class="text-left py-3 px-2">Amount</th>
+                                            <th class="text-left py-3 px-2">Status</th>
+                                            <th class="text-left py-3 px-2">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="py-3 px-2">
+                                                <div class="flex items-center">
+                                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" class="h-8 w-8 rounded-full mr-3">
+                                                    <span>John Wilson</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-2 text-sm">July 5, 2023<br>9:00 AM - 3:00 PM</td>
+                                            <td class="py-3 px-2">$185</td>
+                                            <td class="py-3 px-2">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                    <span class="status-indicator status-upcoming"></span>
+                                                    Upcoming
+                                                </span>
+                                            </td>
+                                            <td class="py-3 px-2">
+                                                <button class="text-blue-600 hover:text-blue-800 mr-2"><i class="far fa-eye"></i></button>
+                                                <button class="text-gray-600 hover:text-gray-800"><i class="fas fa-ellipsis-v"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="py-3 px-2">
+                                                <div class="flex items-center">
+                                                    <img src="https://randomuser.me/api/portraits/women/68.jpg" class="h-8 w-8 rounded-full mr-3">
+                                                    <span>Maria Garcia</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-2 text-sm">July 2, 2023<br>2:00 PM - 8:00 PM</td>
+                                            <td class="py-3 px-2">$210</td>
+                                            <td class="py-3 px-2">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <span class="status-indicator status-completed"></span>
+                                                    Completed
+                                                </span>
+                                            </td>
+                                            <td class="py-3 px-2">
+                                                <button class="text-blue-600 hover:text-blue-800 mr-2"><i class="far fa-eye"></i></button>
+                                                <button class="text-gray-600 hover:text-gray-800"><i class="fas fa-ellipsis-v"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="py-3 px-2">
+                                                <div class="flex items-center">
+                                                    <img src="https://randomuser.me/api/portraits/men/75.jpg" class="h-8 w-8 rounded-full mr-3">
+                                                    <span>David Kim</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-2 text-sm">June 28, 2023<br>10:00 AM - 5:00 PM</td>
+                                            <td class="py-3 px-2">$245</td>
+                                            <td class="py-3 px-2">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                    <span class="status-indicator status-cancelled"></span>
+                                                    Cancelled
+                                                </span>
+                                            </td>
+                                            <td class="py-3 px-2">
+                                                <button class="text-blue-600 hover:text-blue-800 mr-2"><i class="far fa-eye"></i></button>
+                                                <button class="text-gray-600 hover:text-gray-800"><i class="fas fa-ellipsis-v"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="py-3 px-2">
+                                                <div class="flex items-center">
+                                                    <img src="https://randomuser.me/api/portraits/women/42.jpg" class="h-8 w-8 rounded-full mr-3">
+                                                    <span>Lisa Johnson</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-2 text-sm">June 25, 2023<br>9:00 AM - 1:00 PM</td>
+                                            <td class="py-3 px-2">$120</td>
+                                            <td class="py-3 px-2">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <span class="status-indicator status-completed"></span>
+                                                    Completed
+                                                </span>
+                                            </td>
+                                            <td class="py-3 px-2">
+                                                <button class="text-blue-600 hover:text-blue-800 mr-2"><i class="far fa-eye"></i></button>
+                                                <button class="text-gray-600 hover:text-gray-800"><i class="fas fa-ellipsis-v"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card p-5">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-lg font-semibold">Monthly Earnings</h2>
+                                <select class="text-sm border rounded-lg px-2 py-1 bg-white">
+                                    <option>Last 30 days</option>
+                                    <option>Last 60 days</option>
+                                    <option>Last 90 days</option>
+                                </select>
+                            </div>
+                            <div class="mb-4" style="position: relative; height: 200px; width: 100%;">
+                                <canvas id="earningsChart"></canvas>
+                            </div>
+                            <div class="border-t pt-4 mt-2">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm text-gray-600">Total Earnings</span>
+                                    <span class="font-semibold">$3,250</span>
+                                </div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm text-gray-600">Platform Fee (15%)</span>
+                                    <span class="font-semibold text-red-600">-$487.50</span>
+                                </div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm text-gray-600">Payout Amount</span>
+                                    <span class="font-semibold text-green-600">$2,762.50</span>
+                                </div>
+                                <div class="mt-4">
+                                    <button class="btn-primary w-full py-2 rounded-lg">View Detailed Report</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bookings Tab -->
+                <div id="bookings" class="tab-content">
+                    <div class="bg-white rounded-lg shadow-sm p-5 mb-6">
+                        <h2 class="text-lg font-semibold mb-4">Booking Management</h2>
+                        <div class="flex flex-wrap gap-4 mb-6">
+                            <div class="flex-1 min-w-[180px]">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Status Filter</label>
+                                <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option>All Bookings</option>
+                                    <option>Upcoming</option>
+                                    <option>Completed</option>
+                                    <option>Cancelled</option>
+                                    <option>Pending</option>
+                                </select>
+                            </div>
+                            <div class="flex-1 min-w-[180px]">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                                <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option>Last 30 days</option>
+                                    <option>Last 60 days</option>
+                                    <option>Last 90 days</option>
+                                    <option>Custom range</option>
+                                </select>
+                            </div>
+                            <div class="flex-1 min-w-[180px]">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Chef</label>
+                                <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option>All Chefs</option>
+                                    <option>John Wilson</option>
+                                    <option>Maria Garcia</option>
+                                    <option>David Kim</option>
+                                    <option>Lisa Johnson</option>
+                                </select>
+                            </div>
+                            <div class="flex-1 min-w-[180px]">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+                                <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option>Most Recent</option>
+                                    <option>Oldest First</option>
+                                    <option>Highest Amount</option>
+                                    <option>Lowest Amount</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="text-left py-3 px-4">Booking ID</th>
+                                        <th class="text-left py-3 px-4">Chef</th>
+                                        <th class="text-left py-3 px-4">Date & Time</th>
+                                        <th class="text-left py-3 px-4">Duration</th>
+                                        <th class="text-left py-3 px-4">Amount</th>
+                                        <th class="text-left py-3 px-4">Status</th>
+                                        <th class="text-left py-3 px-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="py-3 px-4">#BK-8742</td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center">
+                                                <img src="https://randomuser.me/api/portraits/men/32.jpg" class="h-8 w-8 rounded-full mr-3">
+                                                <span>John Wilson</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-4">July 5, 2023<br>9:00 AM - 3:00 PM</td>
+                                        <td class="py-3 px-4">6 hours</td>
+                                        <td class="py-3 px-4">$185</td>
+                                        <td class="py-3 px-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                <span class="status-indicator status-upcoming"></span>
+                                                Upcoming
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <button class="text-blue-600 hover:text-blue-800 mr-2"><i class="far fa-eye"></i></button>
+                                            <button class="text-red-600 hover:text-red-800 mr-2"><i class="fas fa-times"></i></button>
+                                            <button class="text-gray-600 hover:text-gray-800"><i class="fas fa-ellipsis-v"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="py-3 px-4">#BK-8741</td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center">
+                                                <img src="https://randomuser.me/api/portraits/women/68.jpg" class="h-8 w-8 rounded-full mr-3">
+                                                <span>Maria Garcia</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-4">July 2, 2023<br>2:00 PM - 8:00 PM</td>
+                                        <td class="py-3 px-4">6 hours</td>
+                                        <td class="py-3 px-4">$210</td>
+                                        <td class="py-3 px-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <span class="status-indicator status-completed"></span>
+                                                Completed
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <button class="text-blue-600 hover:text-blue-800 mr-2"><i class="far fa-eye"></i></button>
+                                            <button class="text-gray-600 hover:text-gray-800"><i class="fas fa-ellipsis-v"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="py-3 px-4">#BK-8740</td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center">
+                                                <img src="https://randomuser.me/api/portraits/men/75.jpg" class="h-8 w-8 rounded-full mr-3">
+                                                <span>David Kim</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-4">June 28, 2023<br>10:00 AM - 5:00 PM</td>
+                                        <td class="py-3 px-4">7 hours</td>
+                                        <td class="py-3 px-4">$245</td>
+                                        <td class="py-3 px-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                <span class="status-indicator status-cancelled"></span>
+                                                Cancelled
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <button class="text-blue-600 hover:text-blue-800 mr-2"><i class="far fa-eye"></i></button>
+                                            <button class="text-gray-600 hover:text-gray-800"><i class="fas fa-ellipsis-v"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="py-3 px-4">#BK-8739</td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center">
+                                                <img src="https://randomuser.me/api/portraits/women/42.jpg" class="h-8 w-8 rounded-full mr-3">
+                                                <span>Lisa Johnson</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-4">June 25, 2023<br>9:00 AM - 1:00 PM</td>
+                                        <td class="py-3 px-4">4 hours</td>
+                                        <td class="py-3 px-4">$120</td>
+                                        <td class="py-3 px-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <span class="status-indicator status-completed"></span>
+                                                Completed
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <button class="text-blue-600 hover:text-blue-800 mr-2"><i class="far fa-eye"></i></button>
+                                            <button class="text-gray-600 hover:text-gray-800"><i class="fas fa-ellipsis-v"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="py-3 px-4">#BK-8738</td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center">
+                                                <img src="https://randomuser.me/api/portraits/men/32.jpg" class="h-8 w-8 rounded-full mr-3">
+                                                <span>John Wilson</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-4">June 20, 2023<br>8:00 AM - 2:00 PM</td>
+                                        <td class="py-3 px-4">6 hours</td>
+                                        <td class="py-3 px-4">$185</td>
+                                        <td class="py-3 px-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <span class="status-indicator status-completed"></span>
+                                                Completed
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <button class="text-blue-600 hover:text-blue-800 mr-2"><i class="far fa-eye"></i></button>
+                                            <button class="text-gray-600 hover:text-gray-800"><i class="fas fa-ellipsis-v"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="py-3 px-4">#BK-8737</td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center">
+                                                <img src="https://randomuser.me/api/portraits/women/68.jpg" class="h-8 w-8 rounded-full mr-3">
+                                                <span>Maria Garcia</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-4">June 15, 2023<br>3:00 PM - 9:00 PM</td>
+                                        <td class="py-3 px-4">6 hours</td>
+                                        <td class="py-3 px-4">$210</td>
+                                        <td class="py-3 px-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <span class="status-indicator status-completed"></span>
+                                                Completed
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <button class="text-blue-600 hover:text-blue-800 mr-2"><i class="far fa-eye"></i></button>
+                                            <button class="text-gray-600 hover:text-gray-800"><i class="fas fa-ellipsis-v"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="text-sm text-gray-500">Showing 1-6 of 24 bookings</div>
+                            <div class="flex space-x-1">
+                                <button class="px-3 py-1 rounded border text-sm">Previous</button>
+                                <button class="px-3 py-1 rounded bg-blue-600 text-white text-sm">1</button>
+                                <button class="px-3 py-1 rounded border text-sm">2</button>
+                                <button class="px-3 py-1 rounded border text-sm">3</button>
+                                <button class="px-3 py-1 rounded border text-sm">4</button>
+                                <button class="px-3 py-1 rounded border text-sm">Next</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm p-5">
+                        <h2 class="text-lg font-semibold mb-4">Booking Requests</h2>
+                        <div class="space-y-4">
+                            <div class="border rounded-lg p-4 hover:shadow-md transition">
+                                <div class="flex justify-between">
+                                    <h3 class="font-medium">Chef Alex Rodriguez</h3>
+                                    <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Pending</span>
+                                </div>
+                                <p class="text-sm text-gray-600 my-2">July 15, 2023 • 9:00 AM - 3:00 PM</p>
+                                <p class="text-sm text-gray-500 mb-3">Mexican Cuisine Pop-up • 6 people</p>
+                                <div class="flex space-x-2">
+                                    <button class="btn-primary px-3 py-1 rounded text-sm">Approve</button>
+                                    <button class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm">Decline</button>
+                                    <button class="text-blue-600 hover:text-blue-800 px-3 py-1 rounded text-sm">Message Chef</button>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg p-4 hover:shadow-md transition">
+                                <div class="flex justify-between">
+                                    <h3 class="font-medium">Chef Emily Chang</h3>
+                                    <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Pending</span>
+                                </div>
+                                <p class="text-sm text-gray-600 my-2">July 18, 2023 • 2:00 PM - 8:00 PM</p>
+                                <p class="text-sm text-gray-500 mb-3">Asian Fusion Demo • 4 people</p>
+                                <div class="flex space-x-2">
+                                    <button class="btn-primary px-3 py-1 rounded text-sm">Approve</button>
+                                    <button class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm">Decline</button>
+                                    <button class="text-blue-600 hover:text-blue-800 px-3 py-1 rounded text-sm">Message Chef</button>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg p-4 hover:shadow-md transition">
+                                <div class="flex justify-between">
+                                    <h3 class="font-medium">Chef Michael Thomas</h3>
+                                    <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Pending</span>
+                                </div>
+                                <p class="text-sm text-gray-600 my-2">July 22, 2023 • 10:00 AM - 4:00 PM</p>
+                                <p class="text-sm text-gray-500 mb-3">Italian Cooking Class • 8 people</p>
+                                <div class="flex space-x-2">
+                                    <button class="btn-primary px-3 py-1 rounded text-sm">Approve</button>
+                                    <button class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm">Decline</button>
+                                    <button class="text-blue-600 hover:text-blue-800 px-3 py-1 rounded text-sm">Message Chef</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kitchen Profile Tab -->
+                <div id="kitchen-profile" class="tab-content">
+                    <div class="bg-white rounded-lg shadow-sm p-5 mb-6">
+                        <h2 class="text-lg font-semibold mb-4">Kitchen Profile</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-md font-medium mb-3">Basic Information</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Kitchen Name</label>
+                                        <input type="text" value="Sarah's Culinary Studio" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                        <textarea rows="4" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">A modern 1,200 sq ft kitchen space perfect for pop-ups, cooking classes, and food photoshoots. Professionally designed with top-of-the-line equipment and natural lighting.</textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                                        <input type="text" value="123 Culinary Ave, Brooklyn, NY 11201" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Kitchen Size</label>
+                                        <input type="text" value="1,200 sq ft" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Maximum Capacity</label>
+                                        <input type="text" value="10 people" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                </div>
+
+                                <h3 class="text-md font-medium mb-3 mt-6">Pricing</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Hourly Rate</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="text" value="35" class="pl-7 w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Daily Rate</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="text" value="245" class="pl-7 w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Cleaning Fee</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="text" value="25" class="pl-7 w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Minimum Booking Duration</label>
+                                        <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                            <option>1 hour</option>
+                                            <option selected>2 hours</option>
+                                            <option>3 hours</option>
+                                            <option>4 hours</option>
+                                            <option>Half day (6 hours)</option>
+                                            <option>Full day (12 hours)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="text-md font-medium mb-3">Kitchen Photos</h3>
+                                <div class="grid grid-cols-2 gap-3 mb-4">
+                                    <div class="border rounded-lg p-1 relative">
+                                        <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8a2l0Y2hlbnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60" class="w-full h-32 object-cover rounded" alt="Kitchen image">
+                                        <button class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                                            <i class="fas fa-times text-xs"></i>
+                                        </button>
+                                    </div>
+                                    <div class="border rounded-lg p-1 relative">
+                                        <img src="https://images.unsplash.com/photo-1565538810643-b5bdb714032a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8a2l0Y2hlbnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60" class="w-full h-32 object-cover rounded" alt="Kitchen image">
+                                        <button class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                                            <i class="fas fa-times text-xs"></i>
+                                        </button>
+                                    </div>
+                                    <div class="border rounded-lg p-1 relative">
+                                        <img src="https://images.unsplash.com/photo-1556911073-38141963c9e0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGtpdGNoZW58ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60" class="w-full h-32 object-cover rounded" alt="Kitchen image">
+                                        <button class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                                            <i class="fas fa-times text-xs"></i>
+                                        </button>
+                                    </div>
+                                    <div class="border rounded-lg border-dashed flex items-center justify-center h-32">
+                                        <div class="text-center">
+                                            <i class="fas fa-plus text-gray-400 mb-1"></i>
+                                            <p class="text-sm text-gray-500">Add Photo</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h3 class="text-md font-medium mb-3">Equipment & Amenities</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <div class="flex flex-wrap mb-2">
+                                            <span class="equipment-tag">Commercial Oven <i class="fas fa-times ml-1 cursor-pointer"></i></span>
+                                            <span class="equipment-tag">6-Burner Gas Range <i class="fas fa-times ml-1 cursor-pointer"></i></span>
+                                            <span class="equipment-tag">Stand Mixer <i class="fas fa-times ml-1 cursor-pointer"></i></span>
+                                            <span class="equipment-tag">Food Processor <i class="fas fa-times ml-1 cursor-pointer"></i></span>
+                                            <span class="equipment-tag">Walk-In Refrigerator <i class="fas fa-times ml-1 cursor-pointer"></i></span>
+                                            <span class="equipment-tag">Deep Fryer <i class="fas fa-times ml-1 cursor-pointer"></i></span>
+                                            <span class="equipment-tag">Blender <i class="fas fa-times ml-1 cursor-pointer"></i></span>
+                                            <span class="equipment-tag">Dishwasher <i class="fas fa-times ml-1 cursor-pointer"></i></span>
+                                        </div>
+                                        <div class="flex">
+                                            <input type="text" placeholder="Add new equipment" class="rounded-l-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                            <button class="btn-primary px-3 rounded-r-lg">Add</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h3 class="text-md font-medium mb-3 mt-6">Rules & Policies</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Cancellation Policy</label>
+                                        <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                            <option>Flexible (Full refund up to 24 hours before)</option>
+                                            <option selected>Moderate (Full refund up to 48 hours before)</option>
+                                            <option>Strict (50% refund up to 1 week before)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Additional Rules</label>
+                                        <textarea rows="3" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">Clean-up required after use. Outside alcohol not permitted without license. No more than 10 people at a time. Amplified music only until 9 PM.</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-right">
+                            <button class="btn-secondary px-4 py-2 rounded-lg mr-3">Cancel</button>
+                            <button class="btn-primary px-4 py-2 rounded-lg">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Earnings Tab -->
+                <div id="earnings" class="tab-content">
+                    <div class="bg-white rounded-lg shadow-sm p-5 mb-6">
+                        <div class="flex flex-wrap justify-between items-center mb-6">
+                            <h2 class="text-lg font-semibold">Earnings Summary</h2>
+                            <div class="flex space-x-2">
+                                <select class="rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option>Last 30 days</option>
+                                    <option>Last 60 days</option>
+                                    <option>Last 90 days</option>
+                                    <option>This year</option>
+                                    <option>All time</option>
+                                </select>
+                                <button class="btn-secondary px-3 py-2 rounded-lg">Export CSV</button>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="card p-4">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-gray-500 text-sm">Total Earnings</p>
+                                        <h3 class="text-2xl font-bold mt-1">$3,250</h3>
+                                        <p class="text-green-600 text-sm"><i class="fas fa-arrow-up mr-1"></i>15% from last month</p>
+                                    </div>
+                                    <div class="rounded-full bg-green-100 p-3">
+                                        <i class="fas fa-dollar-sign text-green-500"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card p-4">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-gray-500 text-sm">Platform Fees</p>
+                                        <h3 class="text-2xl font-bold mt-1">$487.50</h3>
+                                        <p class="text-gray-500 text-sm">15% of total earnings</p>
+                                    </div>
+                                    <div class="rounded-full bg-red-100 p-3">
+                                        <i class="fas fa-percentage text-red-500"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card p-4">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-gray-500 text-sm">Net Payout</p>
+                                        <h3 class="text-2xl font-bold mt-1">$2,762.50</h3>
+                                        <p class="text-gray-500 text-sm">After platform fees</p>
+                                    </div>
+                                    <div class="rounded-full bg-blue-100 p-3">
+                                        <i class="fas fa-wallet text-blue-500"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-md font-medium mb-4">Monthly Earnings</h3>
+                            <div style="position: relative; height: 300px; width: 100%;">
+                                <canvas id="monthlyEarningsChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-md font-medium mb-4">Earnings Breakdown</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full">
+                                    <thead>
+                                        <tr class="bg-gray-50">
+                                            <th class="text-left py-3 px-4">Transaction ID</th>
+                                            <th class="text-left py-3 px-4">Date</th>
+                                            <th class="text-left py-3 px-4">Chef</th>
+                                            <th class="text-left py-3 px-4">Booking Duration</th>
+                                            <th class="text-left py-3 px-4">Amount</th>
+                                            <th class="text-left py-3 px-4">Platform Fee</th>
+                                            <th class="text-left py-3 px-4">Net Earnings</th>
+                                            <th class="text-left py-3 px-4">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="py-3 px-4">#TX-5721</td>
+                                            <td class="py-3 px-4">Jul 02, 2023</td>
+                                            <td class="py-3 px-4">Maria Garcia</td>
+                                            <td class="py-3 px-4">6 hours</td>
+                                            <td class="py-3 px-4">$210.00</td>
+                                            <td class="py-3 px-4">$31.50</td>
+                                            <td class="py-3 px-4">$178.50</td>
+                                            <td class="py-3 px-4">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Paid
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="py-3 px-4">#TX-5720</td>
+                                            <td class="py-3 px-4">Jun 25, 2023</td>
+                                            <td class="py-3 px-4">Lisa Johnson</td>
+                                            <td class="py-3 px-4">4 hours</td>
+                                            <td class="py-3 px-4">$120.00</td>
+                                            <td class="py-3 px-4">$18.00</td>
+                                            <td class="py-3 px-4">$102.00</td>
+                                            <td class="py-3 px-4">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Paid
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="py-3 px-4">#TX-5719</td>
+                                            <td class="py-3 px-4">Jun 20, 2023</td>
+                                            <td class="py-3 px-4">John Wilson</td>
+                                            <td class="py-3 px-4">6 hours</td>
+                                            <td class="py-3 px-4">$185.00</td>
+                                            <td class="py-3 px-4">$27.75</td>
+                                            <td class="py-3 px-4">$157.25</td>
+                                            <td class="py-3 px-4">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Paid
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="py-3 px-4">#TX-5718</td>
+                                            <td class="py-3 px-4">Jun 15, 2023</td>
+                                            <td class="py-3 px-4">Maria Garcia</td>
+                                            <td class="py-3 px-4">6 hours</td>
+                                            <td class="py-3 px-4">$210.00</td>
+                                            <td class="py-3 px-4">$31.50</td>
+                                            <td class="py-3 px-4">$178.50</td>
+                                            <td class="py-3 px-4">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Paid
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="py-3 px-4">#TX-5717</td>
+                                            <td class="py-3 px-4">Jun 10, 2023</td>
+                                            <td class="py-3 px-4">David Kim</td>
+                                            <td class="py-3 px-4">7 hours</td>
+                                            <td class="py-3 px-4">$245.00</td>
+                                            <td class="py-3 px-4">$36.75</td>
+                                            <td class="py-3 px-4">$208.25</td>
+                                            <td class="py-3 px-4">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Paid
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-4 flex justify-between items-center">
+                                <div class="text-sm text-gray-500">Showing 1-5 of 18 transactions</div>
+                                <div class="flex space-x-1">
+                                    <button class="px-3 py-1 rounded border text-sm">Previous</button>
+                                    <button class="px-3 py-1 rounded bg-blue-600 text-white text-sm">1</button>
+                                    <button class="px-3 py-1 rounded border text-sm">2</button>
+                                    <button class="px-3 py-1 rounded border text-sm">3</button>
+                                    <button class="px-3 py-1 rounded border text-sm">4</button>
+                                    <button class="px-3 py-1 rounded border text-sm">Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-sm p-5">
+                        <h2 class="text-lg font-semibold mb-4">Payout Settings</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-md font-medium mb-3">Payout Account</h3>
+                                <div class="border rounded-lg p-4 mb-4">
+                                    <div class="flex items-center">
+                                        <div class="rounded-full bg-blue-100 p-3 mr-3">
+                                            <i class="fas fa-university text-blue-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Bank of America</p>
+                                            <p class="text-sm text-gray-500">Account ending in ••••5678</p>
+                                        </div>
+                                        <button class="ml-auto text-sm text-blue-600 hover:text-blue-800">Edit</button>
+                                    </div>
+                                </div>
+                                <h3 class="text-md font-medium mb-3">Payout Schedule</h3>
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center">
+                                        <input type="radio" id="weekly" name="payout_schedule" class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                        <label for="weekly" class="ml-2 block text-sm text-gray-700">Weekly (Every Monday)</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="radio" id="biweekly" name="payout_schedule" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        <label for="biweekly" class="ml-2 block text-sm text-gray-700">Bi-weekly (Every other Monday)</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="radio" id="monthly" name="payout_schedule" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        <label for="monthly" class="ml-2 block text-sm text-gray-700">Monthly (1st of every month)</label>
+                                    </div>
+                                </div>
+                                <h3 class="text-md font-medium mb-3">Minimum Payout Amount</h3>
+                                <div class="space-y-2">
+                                    <div class="flex items-center">
+                                        <input type="radio" id="min_0" name="min_payout" class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                        <label for="min_0" class="ml-2 block text-sm text-gray-700">No minimum (Pay out all earnings)</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="radio" id="min_50" name="min_payout" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        <label for="min_50" class="ml-2 block text-sm text-gray-700">$50 minimum</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="radio" id="min_100" name="min_payout" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        <label for="min_100" class="ml-2 block text-sm text-gray-700">$100 minimum</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-md font-medium mb-3">Next Payout</h3>
+                                <div class="border rounded-lg p-4 mb-4">
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm text-gray-600">Estimated Amount</span>
+                                        <span class="font-semibold">$515.75</span>
+                                    </div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm text-gray-600">Scheduled Date</span>
+                                        <span class="font-semibold">July 10, 2023</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600">Status</span>
+                                        <span class="font-semibold text-yellow-600">Pending</span>
+                                    </div>
+                                </div>
+                                <h3 class="text-md font-medium mb-3">Payout History</h3>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full">
+                                        <thead>
+                                            <tr class="border-b">
+                                                <th class="text-left py-3 px-4">Date</th>
+                                                <th class="text-left py-3 px-4">Amount</th>
+                                                <th class="text-left py-3 px-4">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="border-b hover:bg-gray-50">
+                                                <td class="py-3 px-4">Jul 3, 2023</td>
+                                                <td class="py-3 px-4">$437.75</td>
+                                                <td class="py-3 px-4">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        Completed
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b hover:bg-gray-50">
+                                                <td class="py-3 px-4">Jun 26, 2023</td>
+                                                <td class="py-3 px-4">$386.50</td>
+                                                <td class="py-3 px-4">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        Completed
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b hover:bg-gray-50">
+                                                <td class="py-3 px-4">Jun 19, 2023</td>
+                                                <td class="py-3 px-4">$543.25</td>
+                                                <td class="py-3 px-4">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        Completed
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="py-3 px-4">Jun 12, 2023</td>
+                                                <td class="py-3 px-4">$395.00</td>
+                                                <td class="py-3 px-4">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        Completed
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <a href="#" class="text-sm text-blue-600 hover:text-blue-800">View All Payouts</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-right">
+                            <button class="btn-secondary px-4 py-2 rounded-lg mr-3">Cancel</button>
+                            <button class="btn-primary px-4 py-2 rounded-lg">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Availability Tab -->
+                <div id="availability" class="tab-content">
+                    <div class="bg-white rounded-lg shadow-sm p-5 mb-6">
+                        <div class="flex flex-wrap justify-between items-center mb-6">
+                            <h2 class="text-lg font-semibold">Availability Calendar</h2>
+                            <div class="flex space-x-2">
+                                <button class="border border-gray-300 px-3 py-2 rounded-lg"><i class="fas fa-chevron-left"></i></button>
+                                <span class="border border-gray-300 px-4 py-2 rounded-lg">July 2023</span>
+                                <button class="border border-gray-300 px-3 py-2 rounded-lg"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex mb-4 flex-wrap">
+                            <div class="mr-6 mb-3">
+                                <span class="inline-block w-4 h-4 bg-green-500 rounded-full mr-2"></span>
+                                <span class="text-sm">Available</span>
+                            </div>
+                            <div class="mr-6 mb-3">
+                                <span class="inline-block w-4 h-4 bg-blue-500 rounded-full mr-2"></span>
+                                <span class="text-sm">Booked</span>
+                            </div>
+                            <div class="mr-6 mb-3">
+                                <span class="inline-block w-4 h-4 bg-red-500 rounded-full mr-2"></span>
+                                <span class="text-sm">Blocked</span>
+                            </div>
+                            <div class="mr-6 mb-3">
+                                <span class="inline-block w-4 h-4 bg-yellow-500 rounded-full mr-2"></span>
+                                <span class="text-sm">Pending Request</span>
+                            </div>
+                        </div>
+                        
+                        <div id="availabilityCalendar" class="mb-6"></div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-md font-medium mb-3">Quick Actions</h3>
+                                <div class="space-y-3">
+                                    <button class="btn-primary w-full py-2 rounded-lg">Block Selected Dates</button>
+                                    <button class="btn-secondary w-full py-2 rounded-lg">Mark Selected Dates as Available</button>
+                                    <button class="border border-gray-300 w-full py-2 rounded-lg">Clear Selection</button>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-md font-medium mb-3">Regular Schedule</h3>
+                                <div class="border rounded-lg p-4">
+                                    <div class="mb-4">
+                                        <p class="text-sm font-medium mb-2">Business Hours</p>
+                                        <div class="space-y-2">
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-sm">Monday</span>
+                                                <div class="flex items-center">
+                                                    <select class="text-sm border rounded-lg px-2 py-1 mr-2">
+                                                        <option>8:00 AM</option>
+                                                        <option selected>9:00 AM</option>
+                                                        <option>10:00 AM</option>
+                                                    </select>
+                                                    <span class="mx-1">to</span>
+                                                    <select class="text-sm border rounded-lg px-2 py-1">
+                                                        <option>5:00 PM</option>
+                                                        <option selected>6:00 PM</option>
+                                                        <option>7:00 PM</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-sm">Tuesday</span>
+                                                <div class="flex items-center">
+                                                    <select class="text-sm border rounded-lg px-2 py-1 mr-2">
+                                                        <option>8:00 AM</option>
+                                                        <option selected>9:00 AM</option>
+                                                        <option>10:00 AM</option>
+                                                    </select>
+                                                    <span class="mx-1">to</span>
+                                                    <select class="text-sm border rounded-lg px-2 py-1">
+                                                        <option>5:00 PM</option>
+                                                        <option selected>6:00 PM</option>
+                                                        <option>7:00 PM</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-sm">Wednesday</span>
+                                                <div class="flex items-center">
+                                                    <select class="text-sm border rounded-lg px-2 py-1 mr-2">
+                                                        <option>8:00 AM</option>
+                                                        <option selected>9:00 AM</option>
+                                                        <option>10:00 AM</option>
+                                                    </select>
+                                                    <span class="mx-1">to</span>
+                                                    <select class="text-sm border rounded-lg px-2 py-1">
+                                                        <option>5:00 PM</option>
+                                                        <option selected>6:00 PM</option>
+                                                        <option>7:00 PM</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-sm">Thursday</span>
+                                                <div class="flex items-center">
+                                                    <select class="text-sm border rounded-lg px-2 py-1 mr-2">
+                                                        <option>8:00 AM</option>
+                                                        <option selected>9:00 AM</option>
+                                                        <option>10:00 AM</option>
+                                                    </select>
+                                                    <span class="mx-1">to</span>
+                                                    <select class="text-sm border rounded-lg px-2 py-1">
+                                                        <option>5:00 PM</option>
+                                                        <option selected>6:00 PM</option>
+                                                        <option>7:00 PM</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-sm">Friday</span>
+                                                <div class="flex items-center">
+                                                    <select class="text-sm border rounded-lg px-2 py-1 mr-2">
+                                                        <option>8:00 AM</option>
+                                                        <option selected>9:00 AM</option>
+                                                        <option>10:00 AM</option>
+                                                    </select>
+                                                    <span class="mx-1">to</span>
+                                                    <select class="text-sm border rounded-lg px-2 py-1">
+                                                        <option>5:00 PM</option>
+                                                        <option selected>6:00 PM</option>
+                                                        <option>7:00 PM</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-sm">Saturday</span>
+                                                <div class="flex items-center">
+                                                    <select class="text-sm border rounded-lg px-2 py-1 mr-2">
+                                                        <option selected>10:00 AM</option>
+                                                        <option>11:00 AM</option>
+                                                        <option>12:00 PM</option>
+                                                    </select>
+                                                    <span class="mx-1">to</span>
+                                                    <select class="text-sm border rounded-lg px-2 py-1">
+                                                        <option>3:00 PM</option>
+                                                        <option selected>4:00 PM</option>
+                                                        <option>5:00 PM</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-sm">Sunday</span>
+                                                <span class="text-sm text-gray-500">Closed</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <button class="btn-primary px-4 py-2 rounded-lg">Apply Schedule</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-sm p-5">
+                        <h2 class="text-lg font-semibold mb-4">Blocked Dates</h2>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="text-left py-3 px-4">Date Range</th>
+                                        <th class="text-left py-3 px-4">Reason</th>
+                                        <th class="text-left py-3 px-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="py-3 px-4">July 4, 2023</td>
+                                        <td class="py-3 px-4">Independence Day</td>
+                                        <td class="py-3 px-4">
+                                            <button class="text-blue-600 hover:text-blue-800 mr-3">Edit</button>
+                                            <button class="text-red-600 hover:text-red-800">Remove</button>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="py-3 px-4">July 22-24, 2023</td>
+                                        <td class="py-3 px-4">Kitchen Maintenance</td>
+                                        <td class="py-3 px-4">
+                                            <button class="text-blue-600 hover:text-blue-800 mr-3">Edit</button>
+                                            <button class="text-red-600 hover:text-red-800">Remove</button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-3 px-4">August 10-15, 2023</td>
+                                        <td class="py-3 px-4">Personal Vacation</td>
+                                        <td class="py-3 px-4">
+                                            <button class="text-blue-600 hover:text-blue-800 mr-3">Edit</button>
+                                            <button class="text-red-600 hover:text-red-800">Remove</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4">
+                            <button class="btn-secondary px-4 py-2 rounded-lg">Add Blocked Date</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings" class="tab-content">
+                    <div class="bg-white rounded-lg shadow-sm p-5 mb-6">
+                        <h2 class="text-lg font-semibold mb-4">Account Settings</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-md font-medium mb-3">Personal Information</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center mb-6">
+                                        <img src="https://randomuser.me/api/portraits/women/42.jpg" alt="Profile picture" class="h-16 w-16 rounded-full object-cover">
+                                        <div class="ml-4">
+                                            <button class="btn-secondary px-3 py-1 rounded-lg text-sm">Change Photo</button>
+                                            <p class="text-xs text-gray-500 mt-1">JPG, GIF or PNG. Max size 2MB</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                        <input type="text" value="Sarah Johnson" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                        <input type="email" value="sarah@example.com" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                        <input type="tel" value="(212) 555-1234" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                </div>
+
+                                <h3 class="text-md font-medium mb-3 mt-6">Change Password</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                                        <input type="password" placeholder="••••••••" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                                        <input type="password" placeholder="••••••••" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                                        <input type="password" placeholder="••••••••" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <button class="btn-primary px-4 py-2 rounded-lg">Update Password</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="text-md font-medium mb-3">Notification Settings</h3>
+                                <div class="space-y-4">
+                                    <p class="text-sm text-gray-600">Choose how you want to receive notifications</p>
+                                    <div class="border rounded-lg overflow-hidden">
+                                        <table class="min-w-full">
+                                            <thead>
+                                                <tr class="bg-gray-50">
+                                                    <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Notification Type</th>
+                                                    <th class="py-2 px-4 text-center text-sm font-medium text-gray-700">Email</th>
+                                                    <th class="py-2 px-4 text-center text-sm font-medium text-gray-700">SMS</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="border-t">
+                                                    <td class="py-3 px-4 text-sm">New Booking Requests</td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                                    </td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-t">
+                                                    <td class="py-3 px-4 text-sm">Booking Confirmations</td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                                    </td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-t">
+                                                    <td class="py-3 px-4 text-sm">Upcoming Booking Reminders</td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                                    </td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-t">
+                                                    <td class="py-3 px-4 text-sm">Booking Cancellations</td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                                    </td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-t">
+                                                    <td class="py-3 px-4 text-sm">New Reviews</td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                                    </td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded">
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-t">
+                                                    <td class="py-3 px-4 text-sm">Payment Receipts</td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                                    </td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded">
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-t">
+                                                    <td class="py-3 px-4 text-sm">Platform Updates</td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                                    </td>
+                                                    <td class="py-3 px-4 text-center">
+                                                        <input type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <h3 class="text-md font-medium mb-3 mt-6">Privacy Settings</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="show_profile" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                        <label for="show_profile" class="ml-2 block text-sm text-gray-700">Show my profile in search results</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="show_contact" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                        <label for="show_contact" class="ml-2 block text-sm text-gray-700">Show contact info to verified chefs with confirmed bookings</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="marketing_emails" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" checked>
+                                        <label for="marketing_emails" class="ml-2 block text-sm text-gray-700">Receive marketing emails and promotions</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-right">
+                            <button class="btn-secondary px-4 py-2 rounded-lg mr-3">Cancel</button>
+                            <button class="btn-primary px-4 py-2 rounded-lg">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Support Tab -->
+                <div id="support" class="tab-content">
+                    <div class="bg-white rounded-lg shadow-sm p-5 mb-6">
+                        <h2 class="text-lg font-semibold mb-4">Help Center</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                            <div class="border rounded-lg p-5 hover:shadow-md transition">
+                                <div class="rounded-full bg-blue-100 w-12 h-12 flex items-center justify-center mb-3">
+                                    <i class="fas fa-file-alt text-blue-500"></i>
+                                </div>
+                                <h3 class="font-medium mb-1">Documentation</h3>
+                                <p class="text-sm text-gray-600 mb-3">Explore guides and tutorials about how to use the platform effectively.</p>
+                                <a href="#" class="text-blue-600 hover:text-blue-800 text-sm">Browse Documentation <i class="fas fa-arrow-right ml-1"></i></a>
+                            </div>
+                            <div class="border rounded-lg p-5 hover:shadow-md transition">
+                                <div class="rounded-full bg-green-100 w-12 h-12 flex items-center justify-center mb-3">
+                                    <i class="fas fa-comment-alt text-green-500"></i>
+                                </div>
+                                <h3 class="font-medium mb-1">Contact Support</h3>
+                                <p class="text-sm text-gray-600 mb-3">Reach out to our support team for personalized assistance.</p>
+                                <a href="#" class="text-blue-600 hover:text-blue-800 text-sm">Contact Support <i class="fas fa-arrow-right ml-1"></i></a>
+                            </div>
+                            <div class="border rounded-lg p-5 hover:shadow-md transition">
+                                <div class="rounded-full bg-purple-100 w-12 h-12 flex items-center justify-center mb-3">
+                                    <i class="fas fa-question-circle text-purple-500"></i>
+                                </div>
+                                <h3 class="font-medium mb-1">FAQ</h3>
+                                <p class="text-sm text-gray-600 mb-3">Find answers to the most commonly asked questions.</p>
+                                <a href="#" class="text-blue-600 hover:text-blue-800 text-sm">Browse FAQ <i class="fas fa-arrow-right ml-1"></i></a>
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-md font-medium mb-3">Frequently Asked Questions</h3>
+                        <div class="space-y-3 mb-6">
+                            <div class="border rounded-lg">
+                                <button class="flex justify-between items-center w-full px-4 py-3 focus:outline-none">
+                                    <span class="font-medium">How do I handle booking cancellations?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="px-4 pb-3">
+                                    <p class="text-sm text-gray-600">Our platform has a standard cancellation policy: if a chef cancels more than 48 hours before the booking, they receive a full refund. If they cancel between 24-48 hours, they receive a 50% refund. Cancellations within 24 hours receive no refund. You can view and manage your cancellations in the Bookings tab.</p>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg">
+                                <button class="flex justify-between items-center w-full px-4 py-3 focus:outline-none">
+                                    <span class="font-medium">How and when do I get paid?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="px-4 pb-3">
+                                    <p class="text-sm text-gray-600">Payments are processed weekly every Monday for all completed bookings. The platform retains a 15% service fee, and the remaining 85% is transferred to your designated payout account. You can view your upcoming and past payouts in the Earnings tab.</p>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg">
+                                <button class="flex justify-between items-center w-full px-4 py-3 focus:outline-none">
+                                    <span class="font-medium">What happens if a chef damages my kitchen?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="px-4 pb-3">
+                                    <p class="text-sm text-gray-600">All chefs are required to follow the kitchen rules and clean up after use. In the rare case of damage, our platform has a protection policy. Document the damage with photos and submit a claim through the Support tab within 24 hours of the booking end. Our team will review the claim and assist with the resolution.</p>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg">
+                                <button class="flex justify-between items-center w-full px-4 py-3 focus:outline-none">
+                                    <span class="font-medium">How do I update my kitchen's availability?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="px-4 pb-3">
+                                    <p class="text-sm text-gray-600">You can manage your kitchen's availability calendar in the Availability tab. Block off dates when your kitchen is unavailable, set regular business hours, and handle specific time slots. Changes to availability won't affect existing confirmed bookings.</p>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg">
+                                <button class="flex justify-between items-center w-full px-4 py-3 focus:outline-none">
+                                    <span class="font-medium">How do I respond to booking requests?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="px-4 pb-3">
+                                    <p class="text-sm text-gray-600">When you receive a booking request, you'll get an email and SMS notification. You can approve or decline the request from your Dashboard or Bookings tab. You have 12 hours to respond before the system auto-approves the booking. We recommend responding promptly to provide excellent service to potential customers.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-sm p-5">
+                        <h2 class="text-lg font-semibold mb-4">Contact Support</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-md font-medium mb-3">Submit a Support Ticket</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                                        <input type="text" placeholder="Brief description of your issue" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                        <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                            <option>Account Issues</option>
+                                            <option>Booking Problems</option>
+                                            <option>Payment Questions</option>
+                                            <option>Technical Support</option>
+                                            <option>Feature Request</option>
+                                            <option>Other</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                                        <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                            <option>Low</option>
+                                            <option selected>Medium</option>
+                                            <option>High</option>
+                                            <option>Urgent</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                                        <textarea rows="5" placeholder="Please describe your issue in detail..." class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Attachments (optional)</label>
+                                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                                            <div class="space-y-1 text-center">
+                                                <i class="fas fa-upload text-gray-400 text-2xl mb-2"></i>
+                                                <div class="flex text-sm text-gray-600">
+                                                    <label for="file-upload" class="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                                                        <span>Upload a file</span>
+                                                        <input id="file-upload" name="file-upload" type="file" class="sr-only">
+                                                    </label>
+                                                    <p class="pl-1">or drag and drop</p>
+                                                </div>
+                                                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button class="btn-primary px-4 py-2 rounded-lg w-full">Submit Ticket</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-md font-medium mb-3">Recent Support Tickets</h3>
+                                <div class="space-y-3 mb-6">
+                                    <div class="border rounded-lg p-4 hover:shadow-sm">
+                                        <div class="flex justify-between">
+                                            <h4 class="font-medium">#67520 - Payment Question</h4>
+                                            <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">In Progress</span>
+                                        </div>
+                                        <p class="text-sm text-gray-600 my-2">Question about missing payout from last week's bookings</p>
+                                        <p class="text-xs text-gray-500">Submitted on Jul 1, 2023</p>
+                                    </div>
+                                    <div class="border rounded-lg p-4 hover:shadow-sm">
+                                        <div class="flex justify-between">
+                                            <h4 class="font-medium">#67498 - Technical Support</h4>
+                                            <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Resolved</span>
+                                        </div>
+                                        <p class="text-sm text-gray-600 my-2">Calendar availability not showing correctly</p>
+                                        <p class="text-xs text-gray-500">Submitted on Jun 28, 2023</p>
+                                    </div>
+                                </div>
+                                
+                                <h3 class="text-md font-medium mb-3">Contact Information</h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <div class="rounded-full bg-blue-100 p-2 mr-3">
+                                            <i class="fas fa-envelope text-blue-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Email Support</p>
+                                            <p class="text-sm text-gray-600">support@kitchenshare.com</p>
+                                            <p class="text-xs text-gray-500">Response time: Within 24 hours</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="rounded-full bg-green-100 p-2 mr-3">
+                                            <i class="fas fa-phone-alt text-green-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Phone Support</p>
+                                            <p class="text-sm text-gray-600">1-800-KITCHEN (1-800-548-2436)</p>
+                                            <p class="text-xs text-gray-500">Available Mon-Fri, 9am-6pm EST</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="rounded-full bg-purple-100 p-2 mr-3">
+                                            <i class="fas fa-comments text-purple-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Live Chat</p>
+                                            <p class="text-sm text-gray-600">Available on our website</p>
+                                            <p class="text-xs text-gray-500">Available Mon-Fri, 9am-9pm EST</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer class="bg-white border-t mt-6">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-600 uppercase mb-2">About KitchenShare</h3>
+                            <ul class="space-y-1">
+                                <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">About Us</a></li>
+                                <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">How It Works</a></li>
+                                <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Careers</a></li>
+                                <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Blog</a></li>
+                                <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Press</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-600 uppercase mb-2">Support</h3>
+                            <ul class="space-y-1">
+                                <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Help Center</a></li>
+                                <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Contact Us</a></li>
+                                <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Privacy Policy</a></li>
+                                <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Terms of Service</a></li>
+                                <li><a href="#" class="text-sm text-gray-600 hover:text-gray-900">Trust & Safety</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-600 uppercase mb-2">Connect With Us</h3>
+                            <div class="flex space-x-4 mb-4">
+                                <a href="#" class="text-gray-500 hover:text-gray-900"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="text-gray-500 hover:text-gray-900"><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="text-gray-500 hover:text-gray-900"><i class="fab fa-instagram"></i></a>
+                                <a href="#" class="text-gray-500 hover:text-gray-900"><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                            <h3 class="text-sm font-semibold text-gray-600 uppercase mb-2">Download Our App</h3>
+                            <div class="flex space-x-2">
+                                <a href="#" class="border rounded px-2 py-1 text-xs text-gray-600 hover:bg-gray-100"><i class="fab fa-apple mr-1"></i> App Store</a>
+                                <a href="#" class="border rounded px-2 py-1 text-xs text-gray-600 hover:bg-gray-100"><i class="fab fa-google-play mr-1"></i> Google Play</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4 mt-6 flex flex-col md:flex-row justify-between items-center">
+                        <p class="text-sm text-gray-600">© 2023 KitchenShare. All rights reserved.</p>
+                        <div class="flex space-x-4 mt-4 md:mt-0">
+                            <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Terms of Service</a>
+                            <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Privacy Policy</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="script.js" defer></script>
+    <script src="owner-dashboard.js" defer></script>
+</body>
+</html>

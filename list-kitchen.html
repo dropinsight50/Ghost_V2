@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>List Your Kitchen | KitchenShare</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .list-kitchen-content { text-align: center; }
+    .list-kitchen-content .btn { margin-top: 20px; }
+    .benefits-list { text-align: left; max-width: 600px; margin: 30px auto; padding-left: 20px;}
+    .benefits-list li { margin-bottom: 10px; }
+    .benefits-list i { color: var(--primary-color); margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container container">
+      <a href="index.html" class="logo">
+        <i class="fas fa-utensils"></i>
+        KitchenShare
+      </a>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html#hero">Home</a></li>
+          <li><a href="listings.html">Find Kitchens</a></li>
+          <li><a href="list-kitchen.html">List Your Kitchen</a></li>
+          <li><a href="index.html#how-it-works">How It Works</a></li>
+          <li><a href="index.html#footer">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="mobile-menu-icon">
+        <i class="fas fa-bars"></i>
+      </div>
+      <div class="auth-buttons">
+        <a href="login.html" class="btn btn-outline">Log In</a>
+        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content-container">
+    <div class="container list-kitchen-content">
+      <h1>Turn Your Kitchen's Downtime into Revenue</h1>
+      <p class="section-header p" style="max-width: 800px;">Join KitchenShare and make your commercial kitchen available to a network of chefs, caterers, and food entrepreneurs. It's simple, secure, and a great way to earn extra income.</p>
+      
+      <img src="https://via.placeholder.com/800x400/8FBC8F/FFFFFF?text=Happy+Kitchen+Owner" alt="List your kitchen" style="width:100%; max-width:800px; border-radius:8px; margin-bottom:30px;">
+
+      <h2>Why List with KitchenShare?</h2>
+      <ul class="benefits-list">
+        <li><i class="fas fa-dollar-sign"></i> Earn extra income from your underutilized kitchen space.</li>
+        <li><i class="fas fa-calendar-alt"></i> You control your kitchen's availability.</li>
+        <li><i class="fas fa-users"></i> Reach a wide network of verified food professionals.</li>
+        <li><i class="fas fa-shield-alt"></i> Secure payments and support from our team.</li>
+        <li><i class="fas fa-rocket"></i> Easy-to-use platform to manage your listings and bookings.</li>
+      </ul>
+
+      <p>Ready to get started? It's free to list!</p>
+      <a href="signup.html?role=owner" class="btn btn-primary btn-large" style="font-size:1.2rem; padding: 15px 30px;">List Your Kitchen Now</a>
+      <p style="margin-top:15px;">Already have an account? <a href="login.html">Log In</a> to add your kitchen.</p>
+    </div>
+  </main>
+
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col"><h3>About KitchenShare</h3><ul><li><a href="#">Our Story</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li><li><a href="#">Blog</a></li></ul></div>
+        <div class="footer-col"><h3>For Chefs</h3><ul><li><a href="index.html#how-it-works">How It Works</a></li><li><a href="listings.html">Find a Kitchen</a></li><li><a href="#">Pricing</a></li><li><a href="#">Support</a></li></ul></div>
+        <div class="footer-col"><h3>For Kitchen Owners</h3><ul><li><a href="list-kitchen.html">List Your Kitchen</a></li><li><a href="#">Benefits</a></li><li><a href="#">Insurance</a></li><li><a href="#">Host Support</a></li></ul></div>
+        <div class="footer-col"><h3>Connect With Us</h3><div class="social-links"><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></div><h3 class="newsletter-title">Newsletter</h3><form class="newsletter-form"><input type="email" placeholder="Enter your email"><button type="submit" class="btn btn-primary">Subscribe</button></form></div>
+      </div>
+      <div class="copyright"><p>&copy; <span id="currentYear"></span> KitchenShare. All Rights Reserved.</p></div>
+    </div>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>

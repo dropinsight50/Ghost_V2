@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitchen Listings | KitchenShare</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header>
+    <div class="header-container container">
+      <a href="index.html" class="logo">
+        <i class="fas fa-utensils"></i>
+        KitchenShare
+      </a>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html#hero">Home</a></li>
+          <li><a href="listings.html">Find Kitchens</a></li>
+          <li><a href="list-kitchen.html">List Your Kitchen</a></li>
+          <li><a href="index.html#how-it-works">How It Works</a></li>
+          <li><a href="index.html#footer">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="mobile-menu-icon">
+        <i class="fas fa-bars"></i>
+      </div>
+      <div class="auth-buttons">
+        <a href="login.html" class="btn btn-outline">Log In</a>
+        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content-container">
+    <div class="container">
+      <h1>Available Kitchens</h1>
+      <p>Browse through the kitchens available based on your search criteria. Click on a kitchen to see more details and book.</p>
+      <!-- Search filters could go here -->
+      <div class="kitchen-grid">
+        <!-- Placeholder Kitchen Card 1 -->
+        <div class="kitchen-card">
+          <div class="kitchen-image" style="background-image: url('https://via.placeholder.com/400x250/FFC0CB/000000?text=Kitchen+Listing+1');"></div>
+          <div class="kitchen-details">
+            <div class="kitchen-location">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Cityville Center</span>
+            </div>
+            <h3 class="kitchen-title"><a href="kitchen-detail.html?id=4">Pro Chef Space One</a></h3>
+            <div class="kitchen-features">
+              <div class="kitchen-feature"><i class="fas fa-vector-square"></i><span>1000 sq ft</span></div>
+              <div class="kitchen-feature"><i class="fas fa-users"></i><span>Up to 5 staff</span></div>
+              <div class="kitchen-feature"><i class="fas fa-utensils"></i><span>Full Equipment</span></div>
+            </div>
+            <div class="kitchen-price">
+              <div class="price">$50 <span>/hour</span></div>
+              <div class="kitchen-rating"><i class="fas fa-star"></i><span>4.7 (15)</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- Placeholder Kitchen Card 2 -->
+        <div class="kitchen-card">
+          <div class="kitchen-image" style="background-image: url('https://via.placeholder.com/400x250/ADD8E6/000000?text=Kitchen+Listing+2');"></div>
+          <div class="kitchen-details">
+            <div class="kitchen-location">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Suburbia Cooks</span>
+            </div>
+            <h3 class="kitchen-title"><a href="kitchen-detail.html?id=5">The Baker's Nook</a></h3>
+            <div class="kitchen-features">
+              <div class="kitchen-feature"><i class="fas fa-vector-square"></i><span>800 sq ft</span></div>
+              <div class="kitchen-feature"><i class="fas fa-users"></i><span>Up to 3 staff</span></div>
+              <div class="kitchen-feature"><i class="fas fa-utensils"></i><span>Baking Ovens</span></div>
+            </div>
+            <div class="kitchen-price">
+              <div class="price">$40 <span>/hour</span></div>
+              <div class="kitchen-rating"><i class="fas fa-star"></i><span>4.9 (22)</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- More kitchen cards would be dynamically loaded here -->
+      </div>
+    </div>
+  </main>
+
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col"><h3>About KitchenShare</h3><ul><li><a href="#">Our Story</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li><li><a href="#">Blog</a></li></ul></div>
+        <div class="footer-col"><h3>For Chefs</h3><ul><li><a href="index.html#how-it-works">How It Works</a></li><li><a href="listings.html">Find a Kitchen</a></li><li><a href="#">Pricing</a></li><li><a href="#">Support</a></li></ul></div>
+        <div class="footer-col"><h3>For Kitchen Owners</h3><ul><li><a href="list-kitchen.html">List Your Kitchen</a></li><li><a href="#">Benefits</a></li><li><a href="#">Insurance</a></li><li><a href="#">Host Support</a></li></ul></div>
+        <div class="footer-col"><h3>Connect With Us</h3><div class="social-links"><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></div><h3 class="newsletter-title">Newsletter</h3><form class="newsletter-form"><input type="email" placeholder="Enter your email"><button type="submit" class="btn btn-primary">Subscribe</button></form></div>
+      </div>
+      <div class="copyright"><p>&copy; <span id="currentYear"></span> KitchenShare. All Rights Reserved.</p></div>
+    </div>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>

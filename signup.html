@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | KitchenShare</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .auth-form-container { max-width: 450px; margin: 0 auto; padding: 30px; background-color: var(--white-color); border-radius: 8px; box-shadow: var(--shadow); }
+    .auth-form-container h1 { text-align: center; margin-bottom: 25px;}
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+    .form-group input[type="text"], .form-group input[type="email"], .form-group input[type="password"], .form-group select {
+        width: 100%; padding: 12px; border: 1px solid var(--gray-color); border-radius: 5px; font-size: 1rem;
+    }
+    .auth-form-container .btn-primary { width: 100%; padding: 12px; font-size: 1.1rem; }
+    .auth-form-container p { text-align: center; margin-top: 20px; }
+    .error-message { color: red; font-size: 0.9em; margin-top: -10px; margin-bottom: 10px; text-align: left; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container container">
+      <a href="index.html" class="logo">
+        <i class="fas fa-utensils"></i>
+        KitchenShare
+      </a>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html#hero">Home</a></li>
+          <li><a href="listings.html">Find Kitchens</a></li>
+          <li><a href="list-kitchen.html">List Your Kitchen</a></li>
+          <li><a href="index.html#how-it-works">How It Works</a></li>
+          <li><a href="index.html#footer">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="mobile-menu-icon">
+        <i class="fas fa-bars"></i>
+      </div>
+      <div class="auth-buttons">
+        <a href="login.html" class="btn btn-outline">Log In</a>
+        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content-container">
+    <div class="container">
+      <div class="auth-form-container">
+        <h1>Create Your KitchenShare Account</h1>
+        <form id="signup-form">
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+            <div id="password-match-error" class="error-message" style="display: none;">Passwords do not match.</div>
+          </div>
+          <div class="form-group">
+            <label for="userType">I am a:</label>
+            <select id="userType" name="userType">
+              <option value="chef">Chef / Food Entrepreneur</option>
+              <option value="owner">Kitchen Owner</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input type="checkbox" id="terms-signup" name="terms-signup" required>
+            <label for="terms-signup" style="display:inline;">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</label>
+          </div>
+          <div id="signup-error" class="error-message" style="display: none;"></div>
+          <button type="submit" class="btn btn-primary">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="login.html">Log In</a></p>
+      </div>
+    </div>
+  </main>
+
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col"><h3>About KitchenShare</h3><ul><li><a href="#">Our Story</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li><li><a href="#">Blog</a></li></ul></div>
+        <div class="footer-col"><h3>For Chefs</h3><ul><li><a href="index.html#how-it-works">How It Works</a></li><li><a href="listings.html">Find a Kitchen</a></li><li><a href="#">Pricing</a></li><li><a href="#">Support</a></li></ul></div>
+        <div class="footer-col"><h3>For Kitchen Owners</h3><ul><li><a href="list-kitchen.html">List Your Kitchen</a></li><li><a href="#">Benefits</a></li><li><a href="#">Insurance</a></li><li><a href="#">Host Support</a></li></ul></div>
+        <div class="footer-col"><h3>Connect With Us</h3><div class="social-links"><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></div><h3 class="newsletter-title">Newsletter</h3><form class="newsletter-form"><input type="email" placeholder="Enter your email"><button type="submit" class="btn btn-primary">Subscribe</button></form></div>
+      </div>
+      <div class="copyright"><p>&copy; <span id="currentYear"></span> KitchenShare. All Rights Reserved.</p></div>
+    </div>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>

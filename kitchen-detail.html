@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitchen Details | KitchenShare</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .kitchen-detail-hero {
+      height: 400px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .kitchen-detail-hero .slide-overlay { background: rgba(0,0,0,0.3); }
+    .kitchen-detail-content { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-top: 30px; }
+    .kitchen-info h2 { font-size: 2rem; }
+    .kitchen-info .kitchen-location { font-size: 1.1rem; margin-bottom: 20px; }
+    .equipment-tags span { background-color: var(--secondary-color); color: white; padding: 5px 10px; border-radius: 5px; margin-right: 5px; font-size: 0.9rem; display: inline-block; margin-bottom: 5px;}
+    .booking-widget { background-color: var(--light-color); padding: 20px; border-radius: 8px; box-shadow: var(--shadow); }
+    .booking-widget h3 { margin-top: 0; }
+    .booking-widget .price { font-size: 1.8rem; margin-bottom: 15px; }
+    .booking-widget input[type="date"], .booking-widget input[type="time"], .booking-widget select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid var(--gray-color); border-radius: 5px; }
+    .reviews-section h3 { margin-top: 30px; }
+    .review-item { border-bottom: 1px solid var(--gray-color); padding-bottom: 15px; margin-bottom: 15px; }
+    .review-item:last-child { border-bottom: none; }
+    @media (max-width: 768px) {
+      .kitchen-detail-content { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container container">
+      <a href="index.html" class="logo">
+        <i class="fas fa-utensils"></i>
+        KitchenShare
+      </a>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html#hero">Home</a></li>
+          <li><a href="listings.html">Find Kitchens</a></li>
+          <li><a href="list-kitchen.html">List Your Kitchen</a></li>
+          <li><a href="index.html#how-it-works">How It Works</a></li>
+          <li><a href="index.html#footer">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="mobile-menu-icon">
+        <i class="fas fa-bars"></i>
+      </div>
+      <div class="auth-buttons">
+        <a href="login.html" class="btn btn-outline">Log In</a>
+        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content-container">
+    <div class="kitchen-detail-hero" style="background-image: url('https://via.placeholder.com/1200x400/A0522D/FFFFFF?text=Artisan%27s+Hub+Kitchen');">
+      <div class="slide-overlay"></div>
+    </div>
+    <div class="container">
+      <div class="kitchen-detail-content">
+        <div class="kitchen-info">
+          <h2>Artisan's Hub Kitchen (Placeholder)</h2>
+          <div class="kitchen-location"><i class="fas fa-map-marker-alt"></i> Downtown, Chicago</div>
+          <p>A spacious and fully equipped kitchen perfect for caterers, bakers, and food entrepreneurs. Features top-of-the-line appliances and ample prep space.</p>
+          
+          <h3>Equipment</h3>
+          <div class="equipment-tags">
+            <span><i class="fas fa-blender"></i> Industrial Mixer</span>
+            <span><i class="fas fa-bread-slice"></i> Commercial Oven</span>
+            <span><i class="fas fa-drumstick-bite"></i> Deep Fryer</span>
+            <span><i class="fas fa-ice-cream"></i> Walk-in Freezer</span>
+          </div>
+
+          <h3>Availability Calendar</h3>
+          <p>(Calendar widget will be displayed here)</p>
+          <img src="https://via.placeholder.com/600x300/EEEEEE/999999?text=Placeholder+Calendar" alt="Availability Calendar" style="width:100%; max-width:600px; border:1px solid #ccc; margin-bottom:20px;">
+
+          <div class="reviews-section">
+            <h3>Reviews <span class="kitchen-rating"><i class="fas fa-star"></i> 4.9 (28 reviews)</span></h3>
+            <div class="review-item">
+              <h4>Sarah B. <span class="kitchen-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span></h4>
+              <p>"Amazing space, very clean and well-equipped. Will book again!"</p>
+            </div>
+            <div class="review-item">
+              <h4>Mike L. <span class="kitchen-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></span></h4>
+              <p>"Great location and good value. Some equipment was a bit dated but functional."</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="booking-widget">
+          <h3>Book This Kitchen</h3>
+          <div class="price">$45 <span>/hour</span></div>
+          <form action="booking.html" method="POST">
+            <label for="booking-date">Date:</label>
+            <input type="date" id="booking-date" name="booking-date" required>
+            <label for="start-time">Start Time:</label>
+            <input type="time" id="start-time" name="start-time" required>
+            <label for="end-time">End Time:</label>
+            <input type="time" id="end-time" name="end-time" required>
+            <label for="guests">Number of Staff:</label>
+            <select id="guests" name="guests">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6+</option>
+            </select>
+            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:10px;">Request to Book</button>
+          </form>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col"><h3>About KitchenShare</h3><ul><li><a href="#">Our Story</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li><li><a href="#">Blog</a></li></ul></div>
+        <div class="footer-col"><h3>For Chefs</h3><ul><li><a href="index.html#how-it-works">How It Works</a></li><li><a href="listings.html">Find a Kitchen</a></li><li><a href="#">Pricing</a></li><li><a href="#">Support</a></li></ul></div>
+        <div class="footer-col"><h3>For Kitchen Owners</h3><ul><li><a href="list-kitchen.html">List Your Kitchen</a></li><li><a href="#">Benefits</a></li><li><a href="#">Insurance</a></li><li><a href="#">Host Support</a></li></ul></div>
+        <div class="footer-col"><h3>Connect With Us</h3><div class="social-links"><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></div><h3 class="newsletter-title">Newsletter</h3><form class="newsletter-form"><input type="email" placeholder="Enter your email"><button type="submit" class="btn btn-primary">Subscribe</button></form></div>
+      </div>
+      <div class="copyright"><p>&copy; <span id="currentYear"></span> KitchenShare. All Rights Reserved.</p></div>
+    </div>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>

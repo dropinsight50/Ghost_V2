@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KitchenShare | Find Commercial Kitchens On Demand</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset & Base Styles */
+        :root {
+            --primary: #ff6b35;
+            --secondary: #2ec4b6;
+            --dark: #20252e;
+            --light: #f5f5f5;
+            --gray: #e0e0e0;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --gradient: linear-gradient(135deg, #ff6b35 0%, #ff8e61 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--dark);
+            text-decoration: none;
+        }
+        
+        .logo i {
+            color: var(--primary);
+            margin-right: 8px;
+            font-size: 28px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--primary);
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .mobile-menu {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* Hero Section with Carousel */
+        .hero {
+            padding-top: 80px;
+            position: relative;
+            height: 600px;
+            overflow: hidden;
+        }
+        
+        .carousel {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+        
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .slide.active {
+            opacity: 1;
+        }
+        
+        .slide-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .slide-content {
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+            margin-left: 50px;
+            color: white;
+        }
+        
+        .slide-content h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .slide-content p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        
+        .slide-indicators {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+        }
+        
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .indicator.active {
+            background-color: var(--primary);
+        }
+        
+        /* Search Bar */
+        .search-section {
+            margin-top: -50px;
+            position: relative;
+            z-index: 20;
+        }
+        
+        .search-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+        }
+        
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 15px;
+        }
+        
+        .search-input {
+            position: relative;
+        }
+        
+        .search-input i {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+        
+        .search-input input,
+        .search-input select {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input input:focus,
+        .search-input select:focus {
+            border-color: var(--secondary);
+        }
+        
+        /* Featured Kitchens */
+        .featured {
+            padding: 80px 0;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-header h2 {
+            font-size: 32px;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+        
+        .section-header p {
+            font-size: 18px;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .kitchen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .kitchen-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+        
+        .kitchen-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .kitchen-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .kitchen-details {
+            padding: 20px;
+        }
+        
+        .kitchen-location {
+            display: flex;
+            align-items: center;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .kitchen-location i {
+            margin-right: 5px;
+            color: var(--primary);
+        }
+        
+        .kitchen-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .kitchen-features {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .kitchen-feature {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .kitchen-feature i {
+            margin-right: 5px;
+            color: var(--secondary);
+        }
+        
+        .kitchen-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .price {
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--dark);
+        }
+        
+        .price span {
+            font-weight: 400;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .kitchen-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .kitchen-rating i {
+            color: gold;
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            padding: 80px 0;
+            background-color: #f9f9f9;
+        }
+        
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .step {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 32px;
+        }
+        
+        .step h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 80px 0;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .testimonial {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+        
+        .author-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .author-details h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .author-details p {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* CTA Section */
+        .cta {
+            padding: 80px 0;
+            background: var(--gradient);
+            color: white;
+            text-align: center;
+        }
+        
+        .cta h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        
+        .cta p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .btn-white {
+            background-color: white;
+            color: var(--primary);
+        }
+        
+        .btn-white:hover {
+            background-color: #f5f5f5;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-outline-white {
+            border: 2px solid white;
+            color: white;
+            background: transparent;
+        }
+        
+        .btn-outline-white:hover {
+            background-color: white;
+            color: var(--primary);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary);
+        }
+        
+        .footer-col ul {
+            list-style: none;
+        }
+        
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-col ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-col ul li a:hover {
+            color: var(--primary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-wrap: wrap;
+            }
+            
+            nav ul {
+                display: none;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .auth-buttons {
+                margin-left: auto;
+            }
+            
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .slide-content {
+                margin-left: 20px;
+                margin-right: 20px;
+                text-align: center;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container container">
+            <a href="#" class="logo">
+                <i class="fas fa-utensils"></i>
+                KitchenShare
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Find Kitchens</a></li>
+                    <li><a href="#">List Your Kitchen</a></li>
+                    <li><a href="#">How It Works</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+            
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-outline">Log In</a>
+                <a href="#" class="btn btn-primary">Sign Up</a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Hero Section with Carousel -->
+    <section class="hero">
+        <div class="carousel">
+            <!-- Slide 1 -->
+            <div class="slide active" style="background-image: url('/api/placeholder/1200/600');">
+                <div class="slide-overlay"></div>
+                <div class="slide-content">
+                    <h1>Find Your Perfect Commercial Kitchen Space</h1>
+                    <p>Book fully-equipped professional kitchens by the hour or day. Perfect for catering, food trucks, delivery services, and more.</p>
+                    <a href="#" class="btn btn-primary">Find a Kitchen</a>
+                </div>
+            </div>
+            
+            <!-- Slide 2 -->
+            <div class="slide" style="background-image: url('/api/placeholder/1200/600');">
+                <div class="slide-overlay"></div>
+                <div class="slide-content">
+                    <h1>Rent Out Your Commercial Kitchen</h1>
+                    <p>Turn your kitchen's downtime into revenue. List your space and equipment for food entrepreneurs to book when you're not using it.</p>
+                    <a href="#" class="btn btn-primary">List Your Kitchen</a>
+                </div>
+            </div>
+            
+            <!-- Slide 3 -->
+            <div class="slide" style="background-image: url('/api/placeholder/1200/600');">
+                <div class="slide-overlay"></div>
+                <div class="slide-content">
+                    <h1>Start Your Culinary Business Today</h1>
+                    <p>Access professional kitchen spaces without the overhead. Pay only for the time you need, with all equipment included.</p>
+                    <a href="#" class="btn btn-primary">Get Started</a>
+                </div>
+            </div>
+            
+            <!-- Slide Indicators -->
+            <div class="slide-indicators">
+                <div class="indicator active"></div>
+                <div class="indicator"></div>
+                <div class="indicator"></div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <form class="search-form">
+                    <div class="search-input">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" placeholder="Location">
+                    </div>
+                    
+                    <div class="search-input">
+                        <i class="far fa-calendar-alt"></i>
+                        <input type="date">
+                    </div>
+                    
+                    <div class="search-input">
+                        <i class="fas fa-blender"></i>
+                        <select>
+                            <option value="">Equipment Needed</option>
+                            <option value="mixer">Industrial Mixer</option>
+                            <option value="oven">Commercial Oven</option>
+                            <option value="fryer">Deep Fryer</option>
+                            <option value="grill">Grill</option>
+                            <option value="freezer">Walk-in Freezer</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Featured Kitchens -->
+    <section class="featured">
+        <div class="container">
+            <div class="section-header">
+                <h2>Featured Kitchens</h2>
+                <p>Discover top-rated commercial kitchen spaces available in your area</p>
+            </div>
+            
+            <div class="kitchen-grid">
+                <!-- Kitchen Card 1 -->
+                <div class="kitchen-card">
+                    <div class="kitchen-image" style="background-image: url('/api/placeholder/400/250');"></div>
+                    <div class="kitchen-details">
+                        <div class="kitchen-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Downtown, Chicago</span>
+                        </div>
+                        <h3 class="kitchen-title">Artisan's Hub Kitchen</h3>
+                        <div class="kitchen-features">
+                            <div class="kitchen-feature">
+                                <i class="fas fa-vector-square"></i>
+                                <span>1,200 sq ft</span>
+                            </div>
+                            <div class="kitchen-feature">
+                                <i class="fas fa-users"></i>
+                                <span>Up to 6 staff</span>
+                            </div>
+                            <div class="kitchen-feature">
+                                <i class="fas fa-utensils"></i>
+                                <span>Full Equipment</span>
+                            </div>
+                        </div>
+                        <div class="kitchen-price">
+                            <div class="price">$45 <span>/hour</span></div>
+                            <div class="kitchen-rating">
+                                <i class="fas fa-star"></i>
+                                <span>4.9 (28)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Kitchen Card 2 -->
+                <div class="kitchen-card">
+                    <div class="kitchen-image" style="background-image: url('/api/placeholder/400/250');"></div>
+                    <div class="kitchen-details">
+                        <div class="kitchen-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Midtown, New York</span>
+                        </div>
+                        <h3 class="kitchen-title">Culinary Studio NYC</h3>
+                        <div class="kitchen-features">
+                            <div class="kitchen-feature">
+                                <i class="fas fa-vector-square"></i>
+                                <span>950 sq ft</span>
+                            </div>
+                            <div class="kitchen-feature">
+                                <i class="fas fa-users"></i>
+                                <span>Up to 4 staff</span>
+                            </div>
+                            <div class="kitchen-feature">
+                                <i class="fas fa-utensils"></i>
+                                <span>High-End Equipment</span>
+                            </div>
+                        </div>
+                        <div class="kitchen-price">
+                            <div class="price">$65 <span>/hour</span></div>
+                            <div class="kitchen-rating">
+                                <i class="fas fa-star"></i>
+                                <span>4.8 (42)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Kitchen Card 3 -->
+                <div class="kitchen-card">
+                    <div class="kitchen-image" style="background-image: url('/api/placeholder/400/250');"></div>
+                    <div class="kitchen-details">
+                        <div class="kitchen-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Mission District, San Francisco</span>
+                        </div>
+                        <h3 class="kitchen-title">Bay Area Kitchen Co-op</h3>
+                        <div class="kitchen-features">
+                            <div class="kitchen-feature">
+                                <i class="fas fa-vector-square"></i>
+                                <span>1,500 sq ft</span>
+                            </div>
+                            <div class="kitchen-feature">
+                                <i class="fas fa-users"></i>
+                                <span>Up to 8 staff</span>
+                            </div>
+                            <div class="kitchen-feature">
+                                <i class="fas fa-utensils"></i>
+                                <span>Specialty Equipment</span>
+                            </div>
+                        </div>
+                        <div class="kitchen-price">
+                            <div class="price">$55 <span>/hour</span></div>
+                            <div class="kitchen-rating">
+                                <i class="fas fa-star"></i>
+                                <span>4.7 (35)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>KitchenShare makes it easy to find and book commercial kitchen space</p>
+            </div>
+            
+            <div class="steps-container">
+                <!-- Step 1 -->
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Search</h3>
+                    <p>Find kitchens by location, date, time, and equipment needs.</p>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="far fa-calendar-check"></i>
+                    </div>
+                    <h3>Book</h3>
+                    <p>Select your time slot and complete the secure booking process.</p>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h3>Access</h3>
+                    <p>Get access instructions and use the kitchen during your booked time.</p>
+                </div>
+                
+                <!-- Step 4 -->
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3>Cook</h3>
+                    <p>Focus on creating your culinary masterpieces in a professional environment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>What Our Users Say</h2>
+                <p>Hear from chefs and kitchen owners who use KitchenShare</p>
+            </div>
+            
+            <div class="testimonial-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial">
+                    <div class="testimonial-text">
+                        "KitchenShare allowed me to scale my catering business without the massive overhead of leasing a full-time kitchen. The booking process is seamless and I love the variety of spaces available."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-image">
+                            <img src="/api/placeholder/50/50" alt="Sarah J.">
+                        </div>
+                        <div class="author-details">
+                            <h4>Sarah J.</h4>
+                            <p>Chef & Caterer</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="testimonial">
+                    <div class="testimonial-text">
+                        "As a kitchen owner, I've been able to generate significant extra income by renting out my space during off-hours. The platform handles all the details and payments are always on time."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-image">
+                            <img src="/api/placeholder/50/50" alt="Michael T.">
+                        </div>
+                        <div class="author-details">
+                            <h4>Michael T.</h4>
+                            <p>Restaurant Owner</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="testimonial">
+                    <div class="testimonial-text">
+                        "I started my food truck business using KitchenShare for prep work. The flexibility of booking only when I need it has been a game-changer for my small business finances."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-image">
+                            <img src="/api/placeholder/50/50" alt="David L.">
+                        </div>
+                        <div class="author-details">
+                            <h4>David L.</h4>
+                            <p>Food Truck Owner</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Get Started?</h2>
+            <p>Join thousands of chefs and kitchen owners already using KitchenShare to grow their culinary businesses.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-white">Find a Kitchen</a>
+                <a href="#" class="btn btn-outline-white">List Your Kitchen</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Column 1 -->
+                <div class="footer-col">
+                    <h3>

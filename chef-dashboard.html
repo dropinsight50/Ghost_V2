@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chef Dashboard | KitchenShare</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Additional styles specific to dashboard sections if needed */
+    .dashboard-section {
+      margin-bottom: 40px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+    }
+    .dashboard-section h2 {
+      margin-top: 0;
+      border-bottom: 1px solid var(--gray-color);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .booking-item .kitchen-details { /* Re-using kitchen-details for booking items */
+        padding: 15px;
+    }
+    .booking-item .kitchen-title a {
+        color: var(--dark-color);
+    }
+    .booking-item .kitchen-title a:hover {
+        color: var(--primary-color);
+    }
+    .booking-item p {
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+    .booking-item p i {
+        margin-right: 8px;
+        color: var(--primary-color);
+        width: 16px;
+        text-align: center;
+    }
+    .profile-form .form-group, .payment-form .form-group {
+        margin-bottom: 15px;
+    }
+    .profile-form label, .payment-form label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    .profile-form input[type="text"],
+    .profile-form input[type="email"],
+    .payment-form input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--gray-color);
+        border-radius: 5px;
+    }
+    .payment-method-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--gray-color);
+    }
+    .payment-method-item:last-child {
+        border-bottom: none;
+    }
+    .payment-method-item p { margin-bottom: 0; }
+    .btn-small {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container container">
+      <a href="index.html" class="logo">
+        <i class="fas fa-utensils"></i>
+        KitchenShare
+      </a>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html#hero">Home</a></li>
+          <li><a href="listings.html">Find Kitchens</a></li>
+          <li><a href="list-kitchen.html">List Your Kitchen</a></li>
+          <li><a href="index.html#how-it-works">How It Works</a></li>
+          <li><a href="index.html#footer">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="mobile-menu-icon">
+        <i class="fas fa-bars"></i>
+      </div>
+      <div class="auth-buttons">
+        <a href="login.html" class="btn btn-outline">Log In</a>
+        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content-container">
+    <div class="container">
+      <h1>Chef Dashboard</h1>
+      <p>Welcome, Chef! Manage your bookings, profile, and payment methods.</p>
+      
+      <section id="upcoming-bookings" class="dashboard-section">
+        <h2>Upcoming Bookings</h2>
+        <div class="booking-item kitchen-card"> <!-- Re-use card style for bookings -->
+          <div class="kitchen-details">
+            <h3 class="kitchen-title"><a href="kitchen-detail.html?id=1">Artisan's Hub Kitchen</a></h3>
+            <p><i class="far fa-calendar-alt"></i> Date: 2024-08-15</p>
+            <p><i class="far fa-clock"></i> Time: 10:00 AM - 02:00 PM</p>
+            <p><i class="fas fa-map-marker-alt"></i> Downtown, Chicago</p>
+            <p><i class="fas fa-money-bill-wave"></i> Total: $180.00</p>
+            <a href="booking.html?id=XYZ123" class="btn btn-outline btn-small">View Details</a>
+            <a href="#" class="btn btn-outline btn-small" style="margin-left: 10px;">Cancel Booking</a>
+          </div>
+        </div>
+        <div class="booking-item kitchen-card">
+           <div class="kitchen-details">
+            <h3 class="kitchen-title"><a href="kitchen-detail.html?id=2">Culinary Studio NYC</a></h3>
+            <p><i class="far fa-calendar-alt"></i> Date: 2024-08-22</p>
+            <p><i class="far fa-clock"></i> Time: 01:00 PM - 05:00 PM</p>
+            <p><i class="fas fa-map-marker-alt"></i> Midtown, New York</p>
+            <p><i class="fas fa-money-bill-wave"></i> Total: $260.00</p>
+            <a href="booking.html?id=ABC789" class="btn btn-outline btn-small">View Details</a>
+            <a href="#" class="btn btn-outline btn-small" style="margin-left: 10px;">Cancel Booking</a>
+          </div>
+        </div>
+        <!-- <p>No upcoming bookings at the moment.</p> -->
+      </section>
+
+      <section id="booking-history" class="dashboard-section">
+        <h2>Booking History</h2>
+         <div class="booking-item kitchen-card">
+          <div class="kitchen-details">
+            <h3 class="kitchen-title"><a href="kitchen-detail.html?id=3">Bay Area Kitchen Co-op</a></h3>
+            <p><i class="far fa-calendar-check"></i> Date: 2024-07-20 (Completed)</p>
+            <p><i class="far fa-clock"></i> Time: 09:00 AM - 01:00 PM</p>
+            <p><i class="fas fa-map-marker-alt"></i> Mission District, San Francisco</p>
+            <a href="kitchen-detail.html?id=3#reviews" class="btn btn-primary btn-small">Leave a Review</a>
+            <a href="booking.html?id=PAST001" class="btn btn-outline btn-small" style="margin-left: 10px;">View Receipt</a>
+          </div>
+        </div>
+        <p>You have no other past bookings.</p>
+      </section>
+
+      <section id="profile-settings" class="dashboard-section">
+        <h2>Profile Settings</h2>
+        <form class="profile-form">
+          <div class="form-group">
+            <label for="chef-name">Full Name:</label>
+            <input type="text" id="chef-name" name="chef-name" value="Chef John Doe">
+          </div>
+          <div class="form-group">
+            <label for="chef-email">Email Address:</label>
+            <input type="email" id="chef-email" name="chef-email" value="john.doe@example.com">
+          </div>
+          <div class="form-group">
+            <label for="chef-phone">Phone Number:</label>
+            <input type="text" id="chef-phone" name="chef-phone" value="+1-555-123-4567">
+          </div>
+          <button type="submit" class="btn btn-primary">Update Profile</button>
+        </form>
+      </section>
+
+       <section id="payment-methods" class="dashboard-section">
+        <h2>Saved Payment Methods</h2>
+        <div class="payment-method-item">
+            <p><i class="fab fa-cc-visa"></i> Visa ending in **** 1234 (Expires 12/25)</p>
+            <div>
+                <a href="#" class="btn btn-outline btn-small">Edit</a>
+                <a href="#" class="btn btn-outline btn-small" style="margin-left: 10px;">Remove</a>
+            </div>
+        </div>
+         <div class="payment-method-item">
+            <p><i class="fab fa-cc-paypal"></i> PayPal (john.doe@example.com)</p>
+            <div>
+                <a href="#" class="btn btn-outline btn-small">Set as Default</a>
+                <a href="#" class="btn btn-outline btn-small" style="margin-left: 10px;">Remove</a>
+            </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top: 20px;">Add New Payment Method</button>
+      </section>
+    </div>
+  </main>
+
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col"><h3>About KitchenShare</h3><ul><li><a href="#">Our Story</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li><li><a href="#">Blog</a></li></ul></div>
+        <div class="footer-col"><h3>For Chefs</h3><ul><li><a href="index.html#how-it-works">How It Works</a></li><li><a href="listings.html">Find a Kitchen</a></li><li><a href="#">Pricing</a></li><li><a href="#">Support</a></li></ul></div>
+        <div class="footer-col"><h3>For Kitchen Owners</h3><ul><li><a href="list-kitchen.html">List Your Kitchen</a></li><li><a href="#">Benefits</a></li><li><a href="#">Insurance</a></li><li><a href="#">Host Support</a></li></ul></div>
+        <div class="footer-col"><h3>Connect With Us</h3><div class="social-links"><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></div><h3 class="newsletter-title">Newsletter</h3><form class="newsletter-form"><input type="email" placeholder="Enter your email"><button type="submit" class="btn btn-primary">Subscribe</button></form></div>
+      </div>
+      <div class="copyright"><p>&copy; <span id="currentYear"></span> KitchenShare. All Rights Reserved.</p></div>
+    </div>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
